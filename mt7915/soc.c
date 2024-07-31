@@ -6,7 +6,6 @@
 #include <linux/platform_device.h>
 #include <linux/pinctrl/consumer.h>
 #include <linux/of.h>
-#include <linux/of_device.h>
 #include <linux/of_reserved_mem.h>
 #include <linux/iopoll.h>
 #include <linux/reset.h>
@@ -1283,13 +1282,11 @@ free_device:
 	return ret;
 }
 
-static int mt798x_wmac_remove(struct platform_device *pdev)
+static void mt798x_wmac_remove(struct platform_device *pdev)
 {
 	struct mt7915_dev *dev = platform_get_drvdata(pdev);
 
 	mt7915_unregister_device(dev);
-
-	return 0;
 }
 
 static const struct of_device_id mt798x_wmac_of_match[] = {
@@ -1306,7 +1303,7 @@ struct platform_driver mt798x_wmac_driver = {
 		.of_match_table = mt798x_wmac_of_match,
 	},
 	.probe = mt798x_wmac_probe,
-	.remove = mt798x_wmac_remove,
+	.remove_new = mt798x_wmac_remove,
 };
 
 MODULE_FIRMWARE(MT7986_FIRMWARE_WA);

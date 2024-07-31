@@ -268,7 +268,7 @@ static int mt7921_start(struct ieee80211_hw *hw)
 	return err;
 }
 
-static void mt7921_stop(struct ieee80211_hw *hw)
+static void mt7921_stop(struct ieee80211_hw *hw, bool suspend)
 {
 	struct mt792x_dev *dev = mt792x_hw_dev(hw);
 	int err = 0;
@@ -281,7 +281,7 @@ static void mt7921_stop(struct ieee80211_hw *hw)
 			return;
 	}
 
-	mt792x_stop(hw);
+	mt792x_stop(hw, false);
 }
 
 static int
@@ -303,7 +303,6 @@ mt7921_add_interface(struct ieee80211_hw *hw, struct ieee80211_vif *vif)
 
 	mvif->bss_conf.mt76.omac_idx = mvif->bss_conf.mt76.idx;
 	mvif->phy = phy;
-	mvif->bss_conf.vif = mvif;
 	mvif->bss_conf.mt76.band_idx = 0;
 	mvif->bss_conf.mt76.wmm_idx = mvif->bss_conf.mt76.idx % MT76_CONNAC_MAX_WMM_SETS;
 

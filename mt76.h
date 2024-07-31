@@ -15,11 +15,7 @@
 #include <linux/average.h>
 #include <linux/soc/mediatek/mtk_wed.h>
 #include <net/mac80211.h>
-#if LINUX_VERSION_CODE < KERNEL_VERSION(6,6,0)
-#include <net/page_pool.h>
-#else
 #include <net/page_pool/helpers.h>
-#endif
 #include "util.h"
 #include "testmode.h"
 
@@ -166,8 +162,8 @@ enum mt76_dfs_state {
 
 struct mt76_queue_buf {
 	dma_addr_t addr;
-	u16 len:15,
-	    skip_unmap:1;
+	u16 len;
+	bool skip_unmap;
 };
 
 struct mt76_tx_info {
@@ -422,7 +418,7 @@ struct mt76_rx_tid {
 
 	u8 started:1, stopped:1, timer_pending:1;
 
-	struct sk_buff *reorder_buf[];
+	struct sk_buff *reorder_buf[] __counted_by(size);
 };
 
 #define MT_TX_CB_DMA_DONE		BIT(0)
@@ -839,8 +835,8 @@ struct mt76_dev {
 
 	struct mt76_mcu mcu;
 
-	struct net_device napi_dev;
-	struct net_device tx_napi_dev;
+	struct net_device *napi_dev;
+	struct net_device *tx_napi_dev;
 	spinlock_t rx_lock;
 	struct napi_struct napi[__MT_RXQ_MAX];
 	struct sk_buff_head rx_skb[__MT_RXQ_MAX];
